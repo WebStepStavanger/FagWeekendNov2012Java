@@ -1,7 +1,6 @@
 package no.webstep.person;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -34,8 +33,17 @@ public class PersonRestClient {
         gson = builder.create();
     }
     
-    private Person get(int i) throws IOException {
-        String json = Request.Get(endPoint.resolve("person/" + i))
+    private URI urlFor(int personId) {
+        return endPoint.resolve("person/" + personId);
+    }
+    
+    private void checkPersonId(Person person) {
+        Objects.requireNonNull(person, "person must not be null");
+        Objects.requireNonNull(person.getId(), "person.id must not be null");
+    }
+    
+    private Person get(int personId) throws IOException {
+        String json = Request.Get(urlFor(personId))
                 .version(HttpVersion.HTTP_1_1)
                 .connectTimeout(TIMEOUT)
                 .socketTimeout(TIMEOUT)
@@ -52,8 +60,7 @@ public class PersonRestClient {
                 .addHeader("accept", ContentType.APPLICATION_JSON.toString())
                 .execute().returnContent().asString();
         
-        Type collectionType = new TypeToken<Collection<Person>>(){}.getType();
-        Collection<Person> persons = gson.fromJson(json, collectionType);
+        Collection<Person> persons = gson.fromJson(json, new TypeToken<Collection<Person>>(){}.getType());
         return persons;
     }
     
@@ -69,11 +76,9 @@ public class PersonRestClient {
     }
     
     public Person update(Person person) throws IOException {
-        Objects.requireNonNull(person, "person must not be null");
-        Objects.requireNonNull(person.getId(), "person.id must not be null");
+        checkPersonId(person);
         
-        URI url = endPoint.resolve("person/" + person.getId());
-        String json = Request.Put(url)
+        String json = Request.Put(urlFor(person.getId()))
                 .version(HttpVersion.HTTP_1_1)
                 .connectTimeout(TIMEOUT)
                 .socketTimeout(TIMEOUT)
@@ -84,11 +89,9 @@ public class PersonRestClient {
     }
     
     public Person delete(Person person) throws IOException {
-        Objects.requireNonNull(person, "person must not be null");
-        Objects.requireNonNull(person.getId(), "person.id must not be null");
+        checkPersonId(person);
 
-        URI url = endPoint.resolve("person/" + person.getId());
-        String json = Request.Delete(url)
+        String json = Request.Delete(urlFor(person.getId()))
                 .version(HttpVersion.HTTP_1_1)
                 .connectTimeout(TIMEOUT)
                 .socketTimeout(TIMEOUT)

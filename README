@@ -1,0 +1,17 @@
+# FagWeekendNov2012Java
+
+A simple Java REST client for Webstep Stavanger fagweekend November 2012
+
+## Getting started with Maven and Eclipse
+
+In the project folder, run the following command:
+
+mvn -DdownloadSources=true eclipse:clean eclipse:eclipse
+
+Then refresh your Eclipse project.
+
+
+
+
+
+

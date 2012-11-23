@@ -42,7 +42,7 @@ public class PersonRestClient {
         Objects.requireNonNull(person.getId(), "person.id must not be null");
     }
     
-    private Person get(int personId) throws IOException {
+    public Person get(int personId) throws IOException {
         String json = Request.Get(urlFor(personId))
                 .version(HttpVersion.HTTP_1_1)
                 .connectTimeout(TIMEOUT)
